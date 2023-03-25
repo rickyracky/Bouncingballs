@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Balls Animation</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bouncing Balls Animation</h1>
+    <button onclick="startAnimation()">Play</button>
+    <canvas id="animationCanvas" width="800" height="600"></canvas>
+    <img id="backgroundImage" src="ant.jpg" style="display:none;">
+    <audio id="backgroundMusic" src="Interstellar.mp3" loop></audio>
+
+    <script>
+        const canvas = document.getElementById('animationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const balls = [
+            { x: 100, y: 100, radius: 20, speedX: 2, speedY: 2, color: 'red' },
+            { x: 200, y: 200, radius: 15, speedX: 3, speedY: 3, color: 'blue' },
+            { x: 300, y: 300, radius: 10, speedX: 4, speedY: 4, color: 'green' },
+        ];
+
+        let animation;
+
+        function drawBackground() {
+            const backgroundImage = document.getElementById('backgroundImage');
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+        }
+
+        function drawBall(ball) {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function updateBallPosition(ball) {
+            ball.x += ball.speedX;
+            ball.y += ball.speedY;
+
+            if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+                ball.speedX = -ball.speedX;
+            }
+
+            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+                ball.speedY = -ball.speedY;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
+
+            balls.forEach((ball) => {
+                drawBall(ball);
+                updateBallPosition(ball);
+            });
+        }
+
+        function startAnimation() {
+            if (animation) {
+                clearInterval(animation);
+                const backgroundMusic = document.getElementById('backgroundMusic');
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0;
+            }
+
+            animation = setInterval(draw, 1000 / 60);
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            backgroundMusic.play();
+        }
+    </script>
+</body>
+</html>
